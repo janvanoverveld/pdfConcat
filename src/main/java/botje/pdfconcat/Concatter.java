@@ -1,5 +1,7 @@
 package botje.pdfconcat;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,16 +21,11 @@ public class Concatter {
 	
 	public static void main(String[] args) {
 						
-		logger.debug( "start met concat pdf bestanden" );
-		
-	    System.out.println("Oracle JDBC Connection Testing ~");
-
+		logger.debug( "start met concat pdf bestanden" );	
         String SQL_SELECT = "SELECT PON.PDF FROM PDF_OBJECTEN PON WHERE PON.SOORT = 'INVOER' AND PON.GROEP = 1";
-
 	    try ( Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:21521/botje", "pdfconcat", "cde3cde3");
 	       PreparedStatement preparedStatement = conn.prepareStatement(SQL_SELECT)) {
 	       ResultSet resultSet = preparedStatement.executeQuery();
-
 	       PDFMergerUtility ut = new PDFMergerUtility();
 	       
 	       LinkedList<InputStream> isll = new LinkedList<InputStream>();
@@ -63,8 +60,16 @@ public class Concatter {
 	    	//   isRij[i] = (InputStream) objectRij[i];
 	       //}
 	       //fileEditor.concatenate(isRij,os);
-	       	       	       
-	       
+	       	       	    	       
+	       PreparedStatement pstmt = conn.prepareStatement("insert into pdf_objecten ( groep, soort, pdf ) values ( ?, ?, ? )");	       	            
+	       File blob = new File(mergedFileName);
+	       FileInputStream fis = new FileInputStream(blob);
+	       pstmt.setInt(1, 2);  // set the PK value
+	       pstmt.setString(2, "UITVOER");
+	       pstmt.setBinaryStream(3, fis, (int)blob.length());
+   		   pstmt.executeUpdate();
+	       conn.commit();
+	       //pstmt.close();	       	       	       
 	    } catch (SQLException e) {	       
 	       System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 	       logger.error("sql error {}",e.getMessage() );
