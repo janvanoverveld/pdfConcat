@@ -32,44 +32,20 @@ public class Concatter {
 	       int teller = 1;
 	       String mergedFileName = "pdfbestand_jvo_" + teller++ + "merged.pdf";
 	       while (resultSet.next()) {	    	   
-	    	  //String naamPdfBestand = "pdfbestand_jvo_" + teller++ + ".pdf"; 
-	          //File image = new File(naamPdfBestand);
-	          //FileOutputStream fos = new FileOutputStream(image);
-	          //byte[] buffer = new byte[1];
 	          InputStream is = resultSet.getBinaryStream("PDF");
 	          isll.add(is);
-	          //ut.addSource(is);
-
-	          //while (is.read(buffer) > 0) {
-	          //  fos.write(buffer);
-	          //}
-	          //fos.close();	          	          	          
-	          //logger.info("bestand {} gemaakt", naamPdfBestand );
-	          //if (teller++==3) break;
 	       }
 	       ut.setDestinationFileName(mergedFileName);
 	       ut.addSources(isll);		       
 	       ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
-	       
-	       //OutputStream os = new FileOutputStream("pdfbestand_jvo_" + teller++ + "merged.pdf");
-	       //PdfFileEditor fileEditor = new PdfFileEditor();
-	       //Object[] objectRij = isll.toArray();
-	       //int grootte = objectRij.length;
-	       //InputStream[] isRij = new InputStream[grootte];
-	       //for (int i=0; i<grootte; i++) {
-	    	//   isRij[i] = (InputStream) objectRij[i];
-	       //}
-	       //fileEditor.concatenate(isRij,os);
-	       	       	    	       
+	       	       	       	    	       
 	       PreparedStatement pstmt = conn.prepareStatement("insert into pdf_objecten ( groep, soort, pdf ) values ( ?, ?, ? )");	       	            
 	       File blob = new File(mergedFileName);
 	       FileInputStream fis = new FileInputStream(blob);
 	       pstmt.setInt(1, 2);  // set the PK value
 	       pstmt.setString(2, "UITVOER");
 	       pstmt.setBinaryStream(3, fis, (int)blob.length());
-   		   pstmt.executeUpdate();
-	       conn.commit();
-	       //pstmt.close();	       	       	       
+   		   pstmt.executeUpdate();	       	       	       
 	    } catch (SQLException e) {	       
 	       System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 	       logger.error("sql error {}",e.getMessage() );
