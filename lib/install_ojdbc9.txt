@@ -1,0 +1,12 @@
+
+download jar op
+https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19-8-c-downloads.html
+
+mvn install:install-file -Dfile=C:\eclipse-workspace\pdfconcat\lib\ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=19.8 -Dpackaging=jar
+
+
+<dependency>
+	<groupId>com.oracle</groupId>
+	<artifactId>ojdbc8</artifactId>
+	<version>19.8</version>
+</dependency>
